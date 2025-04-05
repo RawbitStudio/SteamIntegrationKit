@@ -194,11 +194,13 @@ void USIK_MatchmakingLibrary::GetLobbyChatEntry(FSIK_SteamId SteamID, int32 Chat
 	auto ReturnVal = SteamMatchmaking()->GetLobbyChatEntry(SteamID.GetSteamID(), ChatID, &Var_SteamIDUser, Var_ChatEntry.GetData(), Var_ChatEntry.Num(), &Var_ChatEntryType);
 	Var_ChatEntry.SetNum(ReturnVal);
 	SteamIDUser = Var_SteamIDUser;
-	if(Var_ChatEntry.Num() > 0)
+	if (ReturnVal > 0 && ReturnVal <= Var_ChatEntry.Num())
 	{
-		FMemoryReader Reader(Var_ChatEntry);
-		Reader << ChatEntry;
-		Reader.Flush();
+		ChatEntry = FString(ANSI_TO_TCHAR(reinterpret_cast<const char*>(Var_ChatEntry.GetData()))).Left(ReturnVal);
+	}
+	else
+	{
+		ChatEntry = FString();
 	}
 	ChatEntryType = static_cast<ESIK_LobbyChatEntryType>(Var_ChatEntryType);
 #endif

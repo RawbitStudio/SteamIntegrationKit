@@ -43,6 +43,7 @@ void USIK_FindSessions_AsyncFunction::FindSession()
 			{
 #if ENGINE_MINOR_VERSION >= 5
 				SessionSearch->QuerySettings.Set("SEARCH_PRESENCE", true, EOnlineComparisonOp::Equals);
+				SessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals); // UE5.5 Fix
 #else
 				SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 #endif
@@ -113,6 +114,9 @@ void USIK_FindSessions_AsyncFunction::OnFindSessionCompleted(bool bWasSuccess)
 					{
 						FBlueprintSessionResult SessionResult;
 						SessionResult.OnlineResult = SessionSearch->SearchResults[SearchIdx];
+#if ENGINE_MINOR_VERSION >= 5
+						SessionResult.OnlineResult.Session.SessionSettings.bUseLobbiesIfAvailable = true; // UE5.5 Fix
+#endif
 						FOnlineSessionSettings LocalSessionSettings = SessionResult.OnlineResult.Session.SessionSettings;
 						TMap<FName, FString> AllSettingsWithData;
 						TMap<FName, FOnlineSessionSetting>::TIterator It(LocalSessionSettings.Settings);
